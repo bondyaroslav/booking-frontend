@@ -24,7 +24,7 @@ const ContinueStep = () => {
                 Continue your booking
             </h2>
             <p className="text-[#6069A2]">
-                How would you like to countinue?
+                How would you like to continue?
             </p>
 
             <IconButton

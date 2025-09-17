@@ -1,10 +1,10 @@
 export type CheckoutPayload = {
     bookingId: string;
     amountCents: number;
-    currency: string;      // "usd" | "nok" | ...
-    name: string;          // "Booking payment"
+    currency: string;
+    name: string;
     customerEmail: string;
-    method?: string;       // optional: "vipps" | "card" | "bank" | "stripe"
+    method?: string;
 };
 
 export type CheckoutResponse = {

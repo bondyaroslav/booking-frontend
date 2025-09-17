@@ -1,18 +1,18 @@
 "use client"
 import React from "react";
-import { useBookingStore } from "@/entities/booking/model/store";
-import { Button } from "@/components/ui/button";
-import { IconButton } from "@/entities/ui/IconButton";
-import { createCheckout } from "@/lib/payments";
-import { loadStripe } from "@stripe/stripe-js";
+import {useBookingStore} from "@/entities/booking/model/store";
+import {Button} from "@/components/ui/button";
+import {IconButton} from "@/entities/ui/IconButton";
+import {createCheckout} from "@/lib/payments";
+import {loadStripe} from "@stripe/stripe-js";
 
 type CheckoutResponse = {
-    checkoutUrl?: string;   // повний URL, якщо редиректимо напряму
-    sessionId?: string;     // якщо треба Stripe redirectToCheckout
+    checkoutUrl?: string;
+    sessionId?: string;
 };
 
 const BookingSummaryStep = () => {
-    const { calendarDate, time, guests, step, setStep, bookingId, email } = useBookingStore();
+    const {calendarDate, time, guests, step, setStep, bookingId, email} = useBookingStore();
     const [loading, setLoading] = React.useState<null | "vipps" | "card" | "bank" | "stripe">(null);
     const [error, setError] = React.useState<string | null>(null);
 
@@ -33,20 +33,18 @@ const BookingSummaryStep = () => {
                 method,
             })) as CheckoutResponse;
 
-            // 1) Прямий редирект по URL (наприклад, Vipps/Bank)
             if (typeof resp.checkoutUrl === "string" && resp.checkoutUrl.length > 0) {
-                window.location.assign(resp.checkoutUrl); // аргумент точно string
+                window.location.assign(resp.checkoutUrl);
                 return;
             }
 
-            // 2) Stripe checkout через sessionId
             if (typeof resp.sessionId === "string" && resp.sessionId.length > 0) {
                 const pk = process.env.NEXT_PUBLIC_STRIPE_PK;
                 if (!pk) throw new Error("Stripe public key is missing (NEXT_PUBLIC_STRIPE_PK)");
                 const stripe = await loadStripe(pk);
                 if (!stripe) throw new Error("Failed to load Stripe.js");
 
-                const result = await stripe.redirectToCheckout({ sessionId: resp.sessionId });
+                const result = await stripe.redirectToCheckout({sessionId: resp.sessionId});
                 if (result.error) throw new Error(result.error.message);
                 return;
             }
@@ -108,28 +106,28 @@ const BookingSummaryStep = () => {
             <div className="min-h-full space-y-2 text-[#6069A2] text-[16px] leading-[150%] mt-3">
                 <IconButton
                     text={loading === "vipps" ? "Processing…" : "Pay now with Vipps"}
-                    image={{ src: "/icons/vipps.svg", alt: "Vipps" }}
+                    image={{src: "/icons/vipps.svg", alt: "Vipps"}}
                     onClick={() => pay("vipps")}
                     data-testid="btn-vipps"
                     className={isBusy ? "pointer-events-none opacity-60" : undefined}
                 />
                 <IconButton
                     text={loading === "card" ? "Processing…" : "Credit / Debit Card"}
-                    image={{ src: "/icons/card.svg", alt: "Card" }}
+                    image={{src: "/icons/card.svg", alt: "Card"}}
                     onClick={() => pay("card")}
                     data-testid="btn-card"
                     className={isBusy ? "pointer-events-none opacity-60" : undefined}
                 />
                 <IconButton
                     text={loading === "bank" ? "Processing…" : "Bank transfer"}
-                    image={{ src: "/icons/bank.svg", alt: "Bank" }}
+                    image={{src: "/icons/bank.svg", alt: "Bank"}}
                     onClick={() => pay("bank")}
                     data-testid="btn-bank"
                     className={isBusy ? "pointer-events-none opacity-60" : undefined}
                 />
                 <IconButton
                     text={loading === "stripe" ? "Redirecting…" : "Continue with Stripe"}
-                    image={{ src: "/icons/stripe.svg", alt: "Stripe" }}
+                    image={{src: "/icons/stripe.svg", alt: "Stripe"}}
                     onClick={() => pay("stripe")}
                     data-testid="btn-stripe"
                     className={isBusy ? "pointer-events-none opacity-60" : undefined}

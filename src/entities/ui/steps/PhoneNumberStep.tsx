@@ -55,20 +55,16 @@ export default function PhoneNumberStep(
 
     const [local, setLocal] = React.useState("");
     const rawLocal = React.useMemo(() => local.replace(/\D/g, ""), [local]);
-    const e164 = React.useMemo(() => `${country.dial}${rawLocal}`, [country.dial, rawLocal]);
-
     const handleLocalChange = (v: string) => setLocal(country.format(v));
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (rawLocal.length < 6) return; // проста валідація
-        // onSubmit?.({country, local, e164}); // мок відправки
-        setStep(step + 1); // → наступна сторінка
+        if (rawLocal.length < 6) return;
+        setStep(step + 1);
     };
 
     const handleBack = () => {
-        // onBack?.();
-        setStep(Math.max(1, step - 1)); // ← попередня сторінка
+        setStep(Math.max(1, step - 1));
     };
 
     return (
